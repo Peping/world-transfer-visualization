@@ -103,9 +103,6 @@ export default {
 
 <style>
 .worldmap path {
-  stroke: white;
-  stroke-width: 0.4px;
-  stroke-miterlimit: 1;
   transition: fill 1s linear;
 }
 </style>
