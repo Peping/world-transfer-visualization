@@ -12,7 +12,6 @@ export function getViewBoxAttr() {
 export function translateCoords({ Latitude, Longitude }) {
     const primeMeridian = 87.31;
     const equator = 72.5;
-    console.log(Math.tan(Latitude / 90 * Math.PI / 2), Longitude/180 )
     const y = Math.tan(Latitude / 90 * Math.PI / 2) / 4.24 * (svgViewBox.top + svgViewBox.bottom) + equator;
     const x = Longitude/180 * (svgViewBox.left + svgViewBox.right + 6) / 2 + primeMeridian;
     return { x, y };

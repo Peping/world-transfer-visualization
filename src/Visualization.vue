@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 .transferpea {
-  width: 1300px;
+  max-width: 1300px;
   margin: auto;
   display: grid;
 }

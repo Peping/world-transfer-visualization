@@ -1,39 +1,43 @@
 <template>
     <svg v-bind:viewBox="viewbox">
-        <transfer-line v-bind:start="{ Latitude: -40.65, Longitude: -73.97 }" v-bind:end="{ Latitude: 41.28, Longitude: 174.784 }"/>
-        <circle v-for="(item, index) in dots" r=".5" v-bind:key="index" v-bind:cx="item.x" v-bind:cy="item.y"/>
+        <transfer-beam v-bind:StartLocations='[{"Latitude":1.7389,"Longitude":33.1594},{"Latitude":2.5004,"Longitude":33.5007},{"Latitude":4.83,"Longitude":31.58},{"Latitude":0.7025,"Longitude":32.8886}]' 
+                       v-bind:EndLocations='[{"Latitude":-29.7096,"Longitude":-51.14},{"Latitude":-30.88,"Longitude":-55.53}]' 
+                       v-bind:BeamWeight="759.0" />
+        <transfer-beam v-bind:StartLocations='[{"Latitude":-17.8,"Longitude":-63.1667},{"Latitude":-13.683,"Longitude":-61.8666}]' 
+                       v-bind:EndLocations='[{"Latitude":-50.3333,"Longitude":-72.3}]' 
+                       v-bind:BeamWeight="121" />
     </svg>
 </template>
 
 <script>
 import { getViewBoxAttr, translateCoords } from "./mapfunctions";
 import TransferLine from "./TransferLine";
+import BeamVue from './Beam.vue';
 
 export default {
   name: "stage",
   components: {
-    "transfer-line": TransferLine
+    "transfer-line": TransferLine,
+    "transfer-beam": BeamVue
   },
   data() {
     return {
       viewbox: getViewBoxAttr(),
-      dots: [
-        translateCoords({ Latitude: -59.3251172, Longitude: 18.0710936 }),
-        translateCoords({ Latitude: -40.65, Longitude: -73.97 }),
-        translateCoords({ Latitude: -47.593, Longitude: 18.954 }),
-        translateCoords({ Latitude: 52.211, Longitude: -69.463 }),
-        translateCoords({ Latitude: 41.28, Longitude: 174.784 })
-      ]
+      beams: []
     };
   },
-  methods: {}
+  created() {
+    this.eventSource = new EventSource("https://transferpeaapp.azurewebsites.net/sse-notifications")
+    this.eventSource.onmessage = this.onmessage
+  },
+  methods: {
+    onmessage({data}) {
+      this.beams.push(data.Beam);
+      setTimeout(()=> this.beams.shift(), 15000)
+    }
+  }
 };
 </script>
 
 <style scoped>
-circle {
-  stroke: gold;
-  stroke-width: 0.2px;
-  fill: none;
-}
 </style>

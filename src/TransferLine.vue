@@ -1,6 +1,6 @@
 <template>
   <g>
-    <path v-bind:d="pathData" class="lead" v-bind:style="`animation-duration: ${animationDuration}`" v-on:animationend="onAnimationEnd"/>
+    <path v-bind:d="pathData" class="lead" v-bind:style="inlineStyle" v-bind:class="{ weak, appearing }" v-on:animationend="onAnimationEnd"/>
   </g>
 </template>
 
@@ -11,11 +11,11 @@ const normalVectorBowFactor = 5; // The higher, the less pronounced the bow
 
 export default {
   name: "transfer-line",
-  props: ['start', 'end', 'onAnimationEnd'],
+  props: ['start', 'end', 'onAnimationEnd', 'weak', 'strokeWidth', 'appearing'],
   computed: {
     animationDuration() {
-      const start = translateCoords(this.start);
-      const end = translateCoords(this.end);
+      const start = this.start;
+      const end = this.end;
       const directionVector = { x: start.x - end.x, y: start.y - end.y };
       const directionScale = Math.sqrt(
         directionVector.x ** 2 + directionVector.y ** 2
@@ -23,11 +23,14 @@ export default {
       const relativeScale = directionScale / Math.sqrt(
         (svgViewBox.right - svgViewBox.left)**2 + (svgViewBox.bottom - svgViewBox.top)**2
         )
-      return (relativeScale*8).toFixed('3') + 's';
+      return this.weak ? '1s': (relativeScale*10).toFixed('3')+'s';
+    },
+    inlineStyle() {
+      return `animation-duration: ${this.animationDuration}`;
     },
     pathData() {
-      const start = translateCoords(this.start);
-      const end = translateCoords(this.end);
+      const start = this.start;
+      const end = this.end;
       
       const directionVector = { x: start.x - end.x, y: start.y - end.y };
       const directionScale = Math.sqrt(
@@ -55,7 +58,7 @@ export default {
         y: middlePoint.y + normalVector.y
       };
 
-      return `M${start.x},${start.y} Q${control.x},${control.y} ${end.x},${end.y}`;
+      return `M${end.x},${end.y} Q${control.x},${control.y} ${start.x},${start.y}`;
     }
   },
   methods: {}
@@ -68,11 +71,19 @@ export default {
   stroke-width: 0.3px;
   fill: none;
   stroke-dasharray: 100% 100%;
-  animation: ease lead;
+}
+
+.appearing {
+  animation: ease-in-out lead;
+}
+
+.weak {
+  stroke-width: .15px;
+  stroke: gold;
 }
 
 @keyframes lead {
-  from {stroke-dashoffset: 100%}
+  from {stroke-dashoffset: 172%}
   to {stroke-dashoffset: 200%}
 }
 
