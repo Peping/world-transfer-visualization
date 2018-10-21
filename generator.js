@@ -1,10 +1,8 @@
-const latLon = require('./latLon.js')
-let randomNormal = require('random-normal')
-var kafka =  require('kafka-node'),
-    Producer = kafka.Producer,
-    KeyedMessage = kafka.KeyedMessage,
-    client = new kafka.KafkaClient({kafkaHost: process.argv[1]}),//'192.168.81.25:9092'
-    producer = new Producer(client)
+const latLon = require('./latLon')
+const randomNormal = require('random-normal')
+const kafka = require('kafka-node');
+const client = new kafka.KafkaClient({kafkaHost: process.argv[2]});//'192.168.81.25:9092'
+const producer = new kafka.Producer(client);
     
 const transaction = {startPlace: 0, endPlace: 0, amount: 0, saved: 0, timeStamp: 0}
 
@@ -43,3 +41,5 @@ producer.on('ready', function() {
 })
 
 producer.on('error', function(err) {})
+
+console.log("event handlers bound!");
